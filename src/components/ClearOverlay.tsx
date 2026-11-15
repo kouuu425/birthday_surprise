@@ -26,7 +26,15 @@ export function ClearOverlay({ onClose }: { onClose: () => void }) {
             <span key={i} style={{ animationDelay: `${1.2 + i * 0.18}s` }}>{ch}</span>
           ))}
         </p>
-        <p className="clear__hint">{FINAL_HINT}</p>
+        <p className="clear__hint">
+          {/* FINAL_HINT の「\n」の位置で改行する */}
+          {FINAL_HINT.split('\n').map((line, i) => (
+            <span key={i}>
+              {i > 0 && <br />}
+              {line}
+            </span>
+          ))}
+        </p>
         <div className="clear__divider" aria-hidden />
         <p className="clear__bday">Happy Birthday, {NAME}</p>
         <button type="button" className="clear__close" onClick={onClose}>とじる</button>

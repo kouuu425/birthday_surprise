@@ -1,20 +1,24 @@
-/* ===== Design tokens: 瑠璃色 × 金 × 生成り ===== */
+/* ===== Design tokens: ボルドー × ローズゴールド × 生成り =====
+   テーマを変えるときは、この :root の値だけを書き換えればOK */
 :root {
-  --lapis: #1f2d55;
-  --lapis-deep: #121b38;
-  --lapis-soft: #3a4a7a;
-  --gold: #b8955a;
-  --gold-light: #dcc28f;
-  --ivory: #f7f3ea;
-  --paper: #fffdf8;
-  --ink: #1d2236;
-  --muted: #7a7d8c;
-  --line: #e3dccd;
-  --ok: #4f7a62;
-  --ng: #a4544c;
+  --primary: #5a1f2b; /* メイン色（タイトル・入力欄・マスの文字） */
+  --primary-deep: #3a121a; /* クリア画面の背景の暗い側 */
+  --primary-soft: #7a3b47; /* マスの枠線 */
+  --accent: #b98468; /* アクセント（ローズゴールド） */
+  --accent-light: #e2b9a0; /* 暗い背景の上で使うアクセント */
+  --accent-glow: #f6dccb; /* CLEAR の文字のハイライト */
+  --ivory: #f8f1ee; /* ページ背景 */
+  --paper: #fffaf8; /* 盤面・カードの背景 */
+  --cell: #ffffff; /* マスの背景 */
+  --active: #f6e4e3; /* 選択中のマス・カギ */
+  --ink: #3a1f24; /* 本文 */
+  --muted: #85767a; /* 補足の文字 */
+  --line: #ead9d2; /* 区切り線 */
+  --ng-light: #f4c2b8; /* 暗い背景の上の「ちがうみたい」 */
+  --shadow: rgba(58, 18, 26, 0.35);
 
-  --serif-ja: 'Shippori Mincho', 'Hiragino Mincho ProN', 'Yu Mincho', serif;
-  --serif-en: 'Cormorant Garamond', 'Times New Roman', serif;
+  --serif-ja: 'Zen Old Mincho', 'Hiragino Mincho ProN', 'Yu Mincho', serif;
+  --serif-en: 'Playfair Display', 'Times New Roman', serif;
 
   color-scheme: light;
   font-family: var(--serif-ja);
@@ -48,8 +52,8 @@ button {
   cursor: pointer;
 }
 
-.gold {
-  color: var(--gold);
+.accent-text {
+  color: var(--accent);
 }
 
 /* ===== Layout ===== */
@@ -71,7 +75,7 @@ button {
   font-family: var(--serif-en);
   font-style: italic;
   letter-spacing: 0.12em;
-  color: var(--gold);
+  color: var(--accent);
   font-size: 15px;
 }
 
@@ -80,7 +84,7 @@ button {
   font-weight: 600;
   font-size: clamp(30px, 9vw, 40px);
   letter-spacing: 0.18em;
-  color: var(--lapis);
+  color: var(--primary);
   /* letter-spacing の分だけ右にずれるのを補正 */
   margin-right: -0.18em;
 }
@@ -89,7 +93,7 @@ button {
   width: 56px;
   height: 1px;
   margin: 20px auto;
-  background: linear-gradient(90deg, transparent, var(--gold), transparent);
+  background: linear-gradient(90deg, transparent, var(--accent), transparent);
 }
 
 .hero__lead {
@@ -118,7 +122,7 @@ button {
 
 .rules li::before {
   content: '◇';
-  color: var(--gold);
+  color: var(--accent);
   margin-right: 0.6em;
   font-size: 10px;
 }
@@ -134,7 +138,7 @@ button {
   border: 1px solid var(--line);
   border-radius: 4px;
   padding: 10px;
-  box-shadow: 0 10px 30px -18px rgba(31, 45, 85, 0.35);
+  box-shadow: 0 10px 30px -18px var(--shadow);
 }
 
 .grid {
@@ -146,9 +150,9 @@ button {
   position: relative;
   aspect-ratio: 1;
   padding: 0;
-  border: 1px solid var(--lapis-soft);
+  border: 1px solid var(--primary-soft);
   border-radius: 2px;
-  background: #fff;
+  background: var(--cell);
   display: grid;
   place-items: center;
   transition: background-color 0.25s, border-color 0.25s;
@@ -160,16 +164,16 @@ button {
 }
 
 .cell.is-active {
-  background: #e9edf8;
-  border-color: var(--lapis);
+  background: var(--active);
+  border-color: var(--primary);
 }
 
 .cell.is-mark::after {
   content: '';
   position: absolute;
-  inset: 12%;
+  inset: 17%; /* 左上のカギ番号と重ならないよう少し内側に */
   border-radius: 50%;
-  border: 1px solid var(--gold);
+  border: 1px solid var(--accent);
   pointer-events: none;
 }
 
@@ -189,13 +193,13 @@ button {
   bottom: 0;
   font-size: max(6px, 2cqi);
   line-height: 1;
-  color: var(--gold);
+  color: var(--accent);
 }
 
 .cell__letter {
   font-size: 4.6cqi;
   font-weight: 600;
-  color: var(--lapis);
+  color: var(--primary);
 }
 
 .cell.is-filled .cell__letter {
@@ -219,7 +223,7 @@ button {
 
 .answer-row__idx {
   font-size: 10px;
-  color: var(--gold);
+  color: var(--accent);
 }
 
 .answer-row__ch {
@@ -227,10 +231,10 @@ button {
   aspect-ratio: 1;
   display: grid;
   place-items: center;
-  border-bottom: 1px solid var(--gold);
+  border-bottom: 1px solid var(--accent);
   font-size: 17px;
   font-weight: 600;
-  color: var(--lapis);
+  color: var(--primary);
 }
 
 .answer-row.is-complete .answer-row__cell {
@@ -258,7 +262,7 @@ button {
   font-size: 14px;
   font-weight: 600;
   letter-spacing: 0.2em;
-  color: var(--lapis);
+  color: var(--primary);
   padding-bottom: 6px;
   border-bottom: 1px solid var(--line);
 }
@@ -285,19 +289,19 @@ button {
 }
 
 .clue.is-active {
-  background: #e9edf8;
+  background: var(--active);
 }
 
 .clue.is-solved .clue__text {
   color: var(--muted);
   text-decoration: line-through;
-  text-decoration-color: var(--gold);
+  text-decoration-color: var(--accent);
 }
 
 .clue__num {
   font-family: var(--serif-en);
   font-size: 16px;
-  color: var(--gold);
+  color: var(--accent);
 }
 
 .clue__len {
@@ -324,11 +328,11 @@ button {
   pointer-events: auto;
   max-width: 480px;
   margin: 0 auto;
-  background: var(--lapis);
+  background: var(--primary);
   color: var(--ivory);
   border-radius: 10px;
   padding: 14px 16px 6px;
-  box-shadow: 0 12px 30px -10px rgba(18, 27, 56, 0.6);
+  box-shadow: 0 12px 30px -10px var(--shadow);
 }
 
 .panel__empty {
@@ -350,8 +354,8 @@ button {
   flex: none;
   font-size: 11px;
   letter-spacing: 0.1em;
-  color: var(--gold-light);
-  border: 1px solid rgba(220, 194, 143, 0.5);
+  color: var(--accent-light);
+  border: 1px solid color-mix(in srgb, var(--accent-light) 50%, transparent);
   border-radius: 2px;
   padding: 0 6px;
 }
@@ -367,14 +371,14 @@ button {
   height: 26px;
   display: grid;
   place-items: center;
-  border: 1px solid rgba(247, 243, 234, 0.35);
+  border: 1px solid color-mix(in srgb, var(--ivory) 35%, transparent);
   border-radius: 2px;
   font-size: 14px;
-  color: var(--gold-light);
+  color: var(--accent-light);
 }
 
 .panel__pattern span.is-solved {
-  border-color: var(--gold-light);
+  border-color: var(--accent-light);
 }
 
 .panel__form {
@@ -404,15 +408,15 @@ button {
 }
 
 .panel__form input:focus {
-  border-color: var(--gold);
+  border-color: var(--accent);
 }
 
 .panel__form button {
   flex: none;
   padding: 0 18px;
   border-radius: 6px;
-  border: 1px solid var(--gold);
-  background: var(--gold);
+  border: 1px solid var(--accent);
+  background: var(--accent);
   color: #fff;
   font-size: 15px;
   letter-spacing: 0.1em;
@@ -421,7 +425,7 @@ button {
 .panel__done {
   margin: 0;
   font-size: 13px;
-  color: var(--gold-light);
+  color: var(--accent-light);
 }
 
 .panel__feedback {
@@ -431,11 +435,11 @@ button {
 }
 
 .panel__feedback--ok {
-  color: var(--gold-light);
+  color: var(--accent-light);
 }
 
 .panel__feedback--ng {
-  color: #f2b8b0;
+  color: var(--ng-light);
 }
 
 /* ===== Finale / Footer ===== */
@@ -449,7 +453,7 @@ button {
   font-family: var(--serif-en);
   font-style: italic;
   font-size: 24px;
-  color: var(--lapis);
+  color: var(--primary);
 }
 
 .finale button,
@@ -463,8 +467,8 @@ button {
 }
 
 .finale button {
-  border-color: var(--gold);
-  color: var(--gold);
+  border-color: var(--accent);
+  color: var(--accent);
 }
 
 .footer {
@@ -480,7 +484,7 @@ button {
   display: grid;
   place-items: center;
   padding: 24px;
-  background: radial-gradient(100% 80% at 50% 30%, var(--lapis) 0%, var(--lapis-deep) 100%);
+  background: radial-gradient(100% 80% at 50% 30%, var(--primary) 0%, var(--primary-deep) 100%);
   color: var(--ivory);
   text-align: center;
   animation: fade 0.9s ease-out both;
@@ -490,8 +494,8 @@ button {
 .clear__sparkles span {
   position: absolute;
   border-radius: 50%;
-  background: var(--gold-light);
-  box-shadow: 0 0 8px 1px rgba(220, 194, 143, 0.8);
+  background: var(--accent-light);
+  box-shadow: 0 0 8px 1px var(--accent-light);
   opacity: 0;
   animation: twinkle 4s ease-in-out infinite;
 }
@@ -505,7 +509,7 @@ button {
   font-family: var(--serif-en);
   font-style: italic;
   letter-spacing: 0.2em;
-  color: var(--gold-light);
+  color: var(--accent-light);
   animation: rise 1s 0.2s ease-out both;
 }
 
@@ -516,7 +520,7 @@ button {
   font-size: 56px;
   letter-spacing: 0.3em;
   margin-right: -0.3em;
-  background: linear-gradient(180deg, #f3e3bd, var(--gold));
+  background: linear-gradient(180deg, var(--accent-glow), var(--accent));
   -webkit-background-clip: text;
   background-clip: text;
   color: transparent;
@@ -547,7 +551,8 @@ button {
 .clear__hint {
   margin: 14px 0 0;
   font-size: 15px;
-  color: var(--gold-light);
+  line-height: 1.9;
+  color: var(--accent-light);
   animation: fade 1.2s 3.4s both;
 }
 
@@ -555,7 +560,7 @@ button {
   width: 56px;
   height: 1px;
   margin: 32px auto 24px;
-  background: linear-gradient(90deg, transparent, var(--gold), transparent);
+  background: linear-gradient(90deg, transparent, var(--accent), transparent);
   animation: fade 1s 4s both;
 }
 
@@ -570,7 +575,7 @@ button {
 .clear__close {
   margin-top: 36px;
   background: none;
-  border: 1px solid rgba(247, 243, 234, 0.4);
+  border: 1px solid color-mix(in srgb, var(--ivory) 40%, transparent);
   border-radius: 999px;
   padding: 8px 22px;
   font-size: 12.5px;
@@ -596,7 +601,7 @@ button {
 
 @keyframes glow {
   0% { transform: translateY(0); }
-  40% { transform: translateY(-6px); text-shadow: 0 0 12px var(--gold-light); }
+  40% { transform: translateY(-6px); text-shadow: 0 0 12px var(--accent-light); }
   100% { transform: none; }
 }
 
@@ -618,4 +623,227 @@ button {
     animation-delay: 0s !important;
     animation-iteration-count: 1 !important;
   }
+}
+
+/* ===== Start screen (封筒) ===== */
+.start {
+  min-height: 100dvh;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 22px;
+  padding: 32px 16px;
+  text-align: center;
+  background: radial-gradient(120% 70% at 50% 25%, var(--paper) 0%, var(--ivory) 70%);
+  transition: opacity 0.6s ease;
+}
+
+.start.is-leaving {
+  opacity: 0;
+}
+
+.start__to {
+  margin: 0;
+  font-family: var(--serif-en);
+  font-style: italic;
+  font-size: 30px;
+  color: var(--primary);
+  animation: rise 1.2s ease-out both;
+}
+
+.envelope {
+  position: relative;
+  width: min(320px, 84vw);
+  aspect-ratio: 1.45;
+  padding: 0;
+  border: none;
+  background: none;
+  cursor: pointer;
+  perspective: 900px;
+  /* 開いたときに上へ出てくるフタとカードの分、上に余白をとる */
+  margin-top: min(120px, 32vw);
+  animation: rise 1.2s 0.2s ease-out both;
+}
+
+.envelope:disabled {
+  cursor: default;
+}
+
+.envelope:focus-visible {
+  outline: 2px solid var(--accent);
+  outline-offset: 6px;
+  border-radius: 8px;
+}
+
+/* 重なり順: 背面(1) < カード(2) < 前ポケット(3) < フタ(4) < 封蝋(5) */
+.envelope__back {
+  position: absolute;
+  inset: 0;
+  z-index: 1;
+  border-radius: 6px;
+  background: var(--primary-deep);
+}
+
+.envelope__card {
+  position: absolute;
+  left: 6%;
+  right: 6%;
+  top: 8%;
+  height: 84%;
+  z-index: 2;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: flex-start;
+  gap: 6px;
+  padding-top: 12%;
+  border-radius: 3px;
+  background: var(--paper);
+  box-shadow: 0 2px 8px var(--shadow);
+  /* 閉じている間は非表示（見た目でも覆っているが、念のため二重に隠す） */
+  visibility: hidden;
+  transition: transform 0.9s 0.45s ease, visibility 0s 0.45s;
+}
+
+.envelope__card-title {
+  font-family: var(--serif-ja);
+  font-weight: 600;
+  font-size: min(17px, 4.6vw);
+  letter-spacing: 0.08em;
+  color: var(--primary);
+  white-space: nowrap;
+}
+
+.envelope__card-sub {
+  font-family: var(--serif-en);
+  font-style: italic;
+  font-size: min(14px, 3.8vw);
+  letter-spacing: 0.04em;
+  color: var(--accent);
+  white-space: nowrap;
+}
+
+/* 前ポケット: 上辺がV字に切れた形で、封筒の下側〜左右をすべて覆う */
+.envelope__pocket {
+  position: absolute;
+  inset: 0;
+  z-index: 3;
+  border-radius: 6px;
+  background: var(--primary);
+  clip-path: polygon(0 0, 50% 56%, 100% 0, 100% 100%, 0 100%);
+}
+
+/* フタ: 上側のV字部分を覆う。開くと上に折り返して、カードの後ろへ回る */
+.envelope__flap {
+  position: absolute;
+  left: 0;
+  right: 0;
+  top: 0;
+  height: 60%;
+  z-index: 4;
+  border-radius: 6px 6px 0 0;
+  background: var(--primary-soft);
+  clip-path: polygon(0 0, 100% 0, 50% 100%);
+  transform-origin: top center;
+  transition: transform 0.7s ease, z-index 0s 0.35s;
+}
+
+.envelope__seal {
+  position: absolute;
+  left: 50%;
+  top: 56%;
+  z-index: 5;
+  width: 46px;
+  height: 46px;
+  margin: -23px 0 0 -23px;
+  display: grid;
+  place-items: center;
+  border-radius: 50%;
+  background: radial-gradient(circle at 35% 35%, var(--accent-glow), var(--accent) 70%);
+  box-shadow: 0 2px 8px var(--shadow);
+  font-family: var(--serif-en);
+  font-style: italic;
+  font-size: 20px;
+  color: var(--primary-deep);
+  transition: opacity 0.3s, transform 0.3s;
+  animation: pulse 2.4s 1.6s ease-in-out infinite;
+}
+
+.start.is-open .envelope__seal {
+  opacity: 0;
+  transform: scale(0.6);
+  animation: none;
+}
+
+.start.is-open .envelope__flap {
+  transform: rotateX(180deg);
+  z-index: 1;
+}
+
+.start.is-open .envelope__card {
+  visibility: visible;
+  transform: translateY(-58%);
+}
+
+.start__hint {
+  margin: 0;
+  font-size: 13px;
+  color: var(--muted);
+  transition: opacity 0.3s;
+  animation: fade 1s 1s both;
+}
+
+.start.is-open .start__hint {
+  /* フェードインのアニメーションが opacity を上書きするので止める */
+  animation: none;
+  opacity: 0;
+}
+
+.start__after {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 18px;
+  opacity: 0;
+  visibility: hidden;
+  transition: opacity 0.8s 1.3s, visibility 0s 1.3s;
+}
+
+.start.is-open .start__after {
+  opacity: 1;
+  visibility: visible;
+}
+
+.start__message {
+  margin: 0;
+  font-size: 15px;
+  line-height: 2;
+  color: var(--ink);
+}
+
+.start__go {
+  font-family: var(--serif-en);
+  font-size: 19px;
+  letter-spacing: 0.08em;
+  padding: 12px 40px;
+  border-radius: 999px;
+  border: 1px solid var(--accent);
+  background: var(--accent);
+  color: #fff;
+  transition: transform 0.15s;
+}
+
+.start__go:active {
+  transform: scale(0.96);
+}
+
+.start__go:focus-visible {
+  outline: 2px solid var(--primary);
+  outline-offset: 3px;
+}
+
+@keyframes pulse {
+  0%, 100% { transform: scale(1); }
+  50% { transform: scale(1.08); }
 }

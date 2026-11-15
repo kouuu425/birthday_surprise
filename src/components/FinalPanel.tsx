@@ -20,7 +20,7 @@ export function FinalPanel({ onCorrect }: { onCorrect: () => void }) {
     setMisses(n)
     setShaking(true)
     // 3回まちがえたら、少しだけヒントを出す
-    setMessage(n >= 3 ? 'ヒント：この家の中の、ある場所だよ' : 'ちがうみたい…濁点もつけてみて')
+    setMessage(n >= 3 ? 'ヒント：このあと帰る家の中の、ある場所だよ' : 'ちがうみたい…濁点もつけてみて')
   }
 
   return (

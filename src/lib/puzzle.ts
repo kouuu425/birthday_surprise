@@ -33,7 +33,7 @@ export const WORDS: WordDef[] = [
   { answer: 'マルノウチ', row: 7, col: 0, dir: 'down', clue: '去年の冬にイルミネーションを見に行った街' },
   { answer: 'キヨウト', row: 7, col: 4, dir: 'across', clue: '2人で旅した、千年の都' },
   { answer: 'コロツケ', row: 7, col: 9, dir: 'down', clue: '結局、揚げ焼きになったあの料理' },
-  { answer: 'ルリイロ', row: 8, col: 0, dir: 'across', clue: '今夜のディナーのお店の名前' },
+  { answer: 'ルリイロ', row: 8, col: 0, dir: 'across', clue: 'いま2人がいるお店の名前' },
   { answer: 'ウイキツド', row: 9, col: 6, dir: 'across', clue: '一緒に観た、緑の魔女の物語' },
   { answer: 'ギヨウザ', row: 11, col: 4, dir: 'across', clue: '2人で作りたい、包んで作るあの料理' },
   { answer: 'ヘクセンハウス', row: 13, col: 3, dir: 'across', clue: 'クリスマスパーティーで作った、お菓子の家' },
@@ -49,4 +49,5 @@ export const MARKS: [number, number][] = [
 
 /** クリア時に表示する答え（盤面では「ツ」「セ」でも、ここは正しい表記で） */
 export const FINAL_ANSWER = 'クローゼットミギオク'
-export const FINAL_HINT = 'クローゼットの、右の奥。'
+/** クリア画面の一言。「\n」の位置で改行される */
+export const FINAL_HINT = 'うちに帰ったら、\nクローゼットの右の奥を見てみて。'

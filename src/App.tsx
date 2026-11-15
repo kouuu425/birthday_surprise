@@ -3,11 +3,13 @@ import { AnswerPanel } from './components/AnswerPanel.tsx'
 import { ClearOverlay } from './components/ClearOverlay.tsx'
 import { FinalPanel } from './components/FinalPanel.tsx'
 import { Grid } from './components/Grid.tsx'
+import { StartScreen } from './components/StartScreen.tsx'
 import { buildCrossword, cellKey, type Cell, type Entry } from './lib/crossword.ts'
 import { MARKS, NAME } from './lib/puzzle.ts'
 
 const STORAGE_KEY = 'nazo-progress-v2' // 盤面を変えたら番号を上げる（古い進捗と混ざらないように）
 const FINAL_KEY = 'nazo-final-v2'
+const STARTED_KEY = 'nazo-started-v2'
 const CIRCLED = '①②③④⑤⑥⑦⑧⑨⑩⑪⑫'
 // 盤面は固定なので、読み込み時に一度だけ組み立てる
 const { cells, entries } = buildCrossword()
@@ -23,6 +25,21 @@ function loadSolved(): Set<string> {
 function saveSolved(s: Set<string>) {
   try {
     localStorage.setItem(STORAGE_KEY, JSON.stringify([...s]))
+  } catch {
+    /* 保存できなくても遊べる */
+  }
+}
+function loadStarted(): boolean {
+  try {
+    return localStorage.getItem(STARTED_KEY) === '1'
+  } catch {
+    return false
+  }
+}
+function saveStarted(v: boolean) {
+  try {
+    if (v) localStorage.setItem(STARTED_KEY, '1')
+    else localStorage.removeItem(STARTED_KEY)
   } catch {
     /* 保存できなくても遊べる */
   }
@@ -46,6 +63,7 @@ function saveFinal(v: boolean) {
 export default function App() {
   const [solved, setSolved] = useState(loadSolved)
   const [selectedId, setSelectedId] = useState<string | null>(null)
+  const [started, setStarted] = useState(loadStarted)
   const [finalSolved, setFinalSolved] = useState(loadFinal)
   const [showClear, setShowClear] = useState(false)
   const answerRowRef = useRef<HTMLDivElement>(null)
@@ -55,6 +73,7 @@ export default function App() {
 
   useEffect(() => saveSolved(solved), [solved])
   useEffect(() => saveFinal(finalSolved), [finalSolved])
+  useEffect(() => saveStarted(started), [started])
 
   // 全部埋まったら、①〜⑩の列が見えるところまでスクロールして最終問題へ
   useEffect(() => {
@@ -92,7 +111,12 @@ export default function App() {
     setSelectedId(null)
     setFinalSolved(false)
     setShowClear(false)
+    setStarted(false)
+    window.scrollTo(0, 0)
   }
+
+  // 最初はスタート画面（一度始めたら、開き直してもパズルから）
+  if (!started) return <StartScreen onStart={() => setStarted(true)} />
 
   const markLetters = MARKS.map(([r, c]) => {
     const cell = cells.get(cellKey(r, c))!
@@ -108,7 +132,7 @@ export default function App() {
         <p className="hero__lead">
           2人の思い出がカギになったクロスワード。
           <br />
-          すべて埋めたら、<span className="gold">①〜⑩</span>のマスを順に読んでみて。
+          すべて埋めたら、<span className="accent-text">①〜⑩</span>のマスを順に読んでみて。
         </p>
       </header>
 
