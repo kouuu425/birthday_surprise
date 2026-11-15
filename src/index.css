@@ -1,0 +1,621 @@
+/* ===== Design tokens: 瑠璃色 × 金 × 生成り ===== */
+:root {
+  --lapis: #1f2d55;
+  --lapis-deep: #121b38;
+  --lapis-soft: #3a4a7a;
+  --gold: #b8955a;
+  --gold-light: #dcc28f;
+  --ivory: #f7f3ea;
+  --paper: #fffdf8;
+  --ink: #1d2236;
+  --muted: #7a7d8c;
+  --line: #e3dccd;
+  --ok: #4f7a62;
+  --ng: #a4544c;
+
+  --serif-ja: 'Shippori Mincho', 'Hiragino Mincho ProN', 'Yu Mincho', serif;
+  --serif-en: 'Cormorant Garamond', 'Times New Roman', serif;
+
+  color-scheme: light;
+  font-family: var(--serif-ja);
+  color: var(--ink);
+  background: var(--ivory);
+  -webkit-text-size-adjust: 100%;
+  -webkit-tap-highlight-color: transparent;
+}
+
+*,
+*::before,
+*::after {
+  box-sizing: border-box;
+}
+
+body {
+  margin: 0;
+  min-height: 100dvh;
+  background:
+    radial-gradient(120% 60% at 50% 0%, #ffffff 0%, transparent 60%),
+    var(--ivory);
+}
+
+button,
+input {
+  font: inherit;
+  color: inherit;
+}
+
+button {
+  cursor: pointer;
+}
+
+.gold {
+  color: var(--gold);
+}
+
+/* ===== Layout ===== */
+.page {
+  max-width: 480px;
+  margin: 0 auto;
+  padding: 0 16px 240px; /* 下部ドックの分の余白 */
+}
+
+/* ===== Hero ===== */
+.hero {
+  text-align: center;
+  padding: 56px 0 28px;
+  animation: rise 1.2s ease-out both;
+}
+
+.hero__eyebrow {
+  margin: 0;
+  font-family: var(--serif-en);
+  font-style: italic;
+  letter-spacing: 0.12em;
+  color: var(--gold);
+  font-size: 15px;
+}
+
+.hero__title {
+  margin: 10px 0 0;
+  font-weight: 600;
+  font-size: clamp(30px, 9vw, 40px);
+  letter-spacing: 0.18em;
+  color: var(--lapis);
+  /* letter-spacing の分だけ右にずれるのを補正 */
+  margin-right: -0.18em;
+}
+
+.hero__rule {
+  width: 56px;
+  height: 1px;
+  margin: 20px auto;
+  background: linear-gradient(90deg, transparent, var(--gold), transparent);
+}
+
+.hero__lead {
+  margin: 0;
+  font-size: 14px;
+  line-height: 2;
+  color: var(--ink);
+}
+
+/* ===== Card ===== */
+.card {
+  background: var(--paper);
+  border: 1px solid var(--line);
+  border-radius: 4px;
+  padding: 14px 18px;
+}
+
+.rules ul {
+  margin: 0;
+  padding: 0;
+  list-style: none;
+  font-size: 12.5px;
+  line-height: 1.9;
+  color: var(--muted);
+}
+
+.rules li::before {
+  content: '◇';
+  color: var(--gold);
+  margin-right: 0.6em;
+  font-size: 10px;
+}
+
+/* ===== Board ===== */
+.board {
+  margin-top: 24px;
+}
+
+.grid-wrap {
+  container-type: inline-size;
+  background: var(--paper);
+  border: 1px solid var(--line);
+  border-radius: 4px;
+  padding: 10px;
+  box-shadow: 0 10px 30px -18px rgba(31, 45, 85, 0.35);
+}
+
+.grid {
+  display: grid;
+  gap: 2px;
+}
+
+.cell {
+  position: relative;
+  aspect-ratio: 1;
+  padding: 0;
+  border: 1px solid var(--lapis-soft);
+  border-radius: 2px;
+  background: #fff;
+  display: grid;
+  place-items: center;
+  transition: background-color 0.25s, border-color 0.25s;
+}
+
+.cell--void {
+  border: none;
+  background: transparent;
+}
+
+.cell.is-active {
+  background: #e9edf8;
+  border-color: var(--lapis);
+}
+
+.cell.is-mark::after {
+  content: '';
+  position: absolute;
+  inset: 12%;
+  border-radius: 50%;
+  border: 1px solid var(--gold);
+  pointer-events: none;
+}
+
+.cell__num {
+  position: absolute;
+  top: 1px;
+  left: 2px;
+  font-family: var(--serif-en);
+  font-size: max(7px, 2.3cqi);
+  line-height: 1;
+  color: var(--muted);
+}
+
+.cell__mark {
+  position: absolute;
+  right: 1px;
+  bottom: 0;
+  font-size: max(6px, 2cqi);
+  line-height: 1;
+  color: var(--gold);
+}
+
+.cell__letter {
+  font-size: 4.6cqi;
+  font-weight: 600;
+  color: var(--lapis);
+}
+
+.cell.is-filled .cell__letter {
+  animation: ink-in 0.5s ease-out both;
+}
+
+/* ===== Answer row ===== */
+.answer-row {
+  display: grid;
+  grid-template-columns: repeat(10, 1fr);
+  gap: 4px;
+  margin-top: 20px;
+}
+
+.answer-row__cell {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 2px;
+}
+
+.answer-row__idx {
+  font-size: 10px;
+  color: var(--gold);
+}
+
+.answer-row__ch {
+  width: 100%;
+  aspect-ratio: 1;
+  display: grid;
+  place-items: center;
+  border-bottom: 1px solid var(--gold);
+  font-size: 17px;
+  font-weight: 600;
+  color: var(--lapis);
+}
+
+.answer-row.is-complete .answer-row__cell {
+  animation: glow 0.9s ease-out both;
+}
+
+.progress {
+  margin: 10px 0 0;
+  text-align: right;
+  font-family: var(--serif-en);
+  font-size: 14px;
+  color: var(--muted);
+  letter-spacing: 0.1em;
+}
+
+/* ===== Clues ===== */
+.clues {
+  margin-top: 28px;
+  display: grid;
+  gap: 24px;
+}
+
+.clues h2 {
+  margin: 0 0 8px;
+  font-size: 14px;
+  font-weight: 600;
+  letter-spacing: 0.2em;
+  color: var(--lapis);
+  padding-bottom: 6px;
+  border-bottom: 1px solid var(--line);
+}
+
+.clues ol {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+}
+
+.clue {
+  width: 100%;
+  display: grid;
+  grid-template-columns: 1.8em 1fr auto;
+  align-items: baseline;
+  gap: 6px;
+  padding: 9px 6px;
+  text-align: left;
+  background: none;
+  border: none;
+  border-radius: 3px;
+  font-size: 13.5px;
+  line-height: 1.6;
+}
+
+.clue.is-active {
+  background: #e9edf8;
+}
+
+.clue.is-solved .clue__text {
+  color: var(--muted);
+  text-decoration: line-through;
+  text-decoration-color: var(--gold);
+}
+
+.clue__num {
+  font-family: var(--serif-en);
+  font-size: 16px;
+  color: var(--gold);
+}
+
+.clue__len {
+  font-size: 11px;
+  color: var(--muted);
+}
+
+.clue__len::after {
+  content: '文字';
+}
+
+/* ===== Answer dock (下部に固定する入力欄) ===== */
+.dock {
+  position: fixed;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  z-index: 10;
+  padding: 0 12px calc(12px + env(safe-area-inset-bottom));
+  pointer-events: none;
+}
+
+.panel {
+  pointer-events: auto;
+  max-width: 480px;
+  margin: 0 auto;
+  background: var(--lapis);
+  color: var(--ivory);
+  border-radius: 10px;
+  padding: 14px 16px 6px;
+  box-shadow: 0 12px 30px -10px rgba(18, 27, 56, 0.6);
+}
+
+.panel__empty {
+  margin: 4px 0 10px;
+  text-align: center;
+  font-size: 13px;
+  opacity: 0.85;
+}
+
+.panel__head {
+  display: flex;
+  gap: 10px;
+  align-items: baseline;
+  font-size: 13.5px;
+  line-height: 1.6;
+}
+
+.panel__tag {
+  flex: none;
+  font-size: 11px;
+  letter-spacing: 0.1em;
+  color: var(--gold-light);
+  border: 1px solid rgba(220, 194, 143, 0.5);
+  border-radius: 2px;
+  padding: 0 6px;
+}
+
+.panel__pattern {
+  display: flex;
+  gap: 4px;
+  margin: 10px 0;
+}
+
+.panel__pattern span {
+  width: 26px;
+  height: 26px;
+  display: grid;
+  place-items: center;
+  border: 1px solid rgba(247, 243, 234, 0.35);
+  border-radius: 2px;
+  font-size: 14px;
+  color: var(--gold-light);
+}
+
+.panel__pattern span.is-solved {
+  border-color: var(--gold-light);
+}
+
+.panel__form {
+  display: flex;
+  gap: 8px;
+}
+
+.panel__form--final {
+  margin-top: 12px;
+}
+
+.panel__form.is-shaking {
+  animation: shake 0.4s;
+}
+
+.panel__form input {
+  flex: 1;
+  min-width: 0;
+  /* 16px 未満だと iPhone で入力時に勝手にズームされる */
+  font-size: 16px;
+  padding: 10px 12px;
+  border-radius: 6px;
+  border: 1px solid transparent;
+  background: var(--ivory);
+  color: var(--ink);
+  outline: none;
+}
+
+.panel__form input:focus {
+  border-color: var(--gold);
+}
+
+.panel__form button {
+  flex: none;
+  padding: 0 18px;
+  border-radius: 6px;
+  border: 1px solid var(--gold);
+  background: var(--gold);
+  color: #fff;
+  font-size: 15px;
+  letter-spacing: 0.1em;
+}
+
+.panel__done {
+  margin: 0;
+  font-size: 13px;
+  color: var(--gold-light);
+}
+
+.panel__feedback {
+  min-height: 1.6em;
+  margin: 6px 0 0;
+  font-size: 12.5px;
+}
+
+.panel__feedback--ok {
+  color: var(--gold-light);
+}
+
+.panel__feedback--ng {
+  color: #f2b8b0;
+}
+
+/* ===== Finale / Footer ===== */
+.finale {
+  margin-top: 28px;
+  text-align: center;
+}
+
+.finale__bday {
+  margin: 6px 0 12px;
+  font-family: var(--serif-en);
+  font-style: italic;
+  font-size: 24px;
+  color: var(--lapis);
+}
+
+.finale button,
+.footer button {
+  background: none;
+  border: 1px solid var(--line);
+  border-radius: 999px;
+  padding: 8px 18px;
+  font-size: 12.5px;
+  color: var(--muted);
+}
+
+.finale button {
+  border-color: var(--gold);
+  color: var(--gold);
+}
+
+.footer {
+  margin-top: 40px;
+  text-align: center;
+}
+
+/* ===== Clear overlay ===== */
+.clear {
+  position: fixed;
+  inset: 0;
+  z-index: 20;
+  display: grid;
+  place-items: center;
+  padding: 24px;
+  background: radial-gradient(100% 80% at 50% 30%, var(--lapis) 0%, var(--lapis-deep) 100%);
+  color: var(--ivory);
+  text-align: center;
+  animation: fade 0.9s ease-out both;
+  overflow: hidden;
+}
+
+.clear__sparkles span {
+  position: absolute;
+  border-radius: 50%;
+  background: var(--gold-light);
+  box-shadow: 0 0 8px 1px rgba(220, 194, 143, 0.8);
+  opacity: 0;
+  animation: twinkle 4s ease-in-out infinite;
+}
+
+.clear__body {
+  position: relative;
+}
+
+.clear__eyebrow {
+  margin: 0;
+  font-family: var(--serif-en);
+  font-style: italic;
+  letter-spacing: 0.2em;
+  color: var(--gold-light);
+  animation: rise 1s 0.2s ease-out both;
+}
+
+.clear__title {
+  margin: 4px 0 28px;
+  font-family: var(--serif-en);
+  font-weight: 500;
+  font-size: 56px;
+  letter-spacing: 0.3em;
+  margin-right: -0.3em;
+  background: linear-gradient(180deg, #f3e3bd, var(--gold));
+  -webkit-background-clip: text;
+  background-clip: text;
+  color: transparent;
+  animation: rise 1.2s 0.4s ease-out both;
+}
+
+.clear__label {
+  margin: 0;
+  font-size: 12px;
+  letter-spacing: 0.4em;
+  opacity: 0.7;
+  animation: fade 1s 1s both;
+}
+
+.clear__answer {
+  margin: 10px 0 0;
+  font-size: clamp(24px, 7.4vw, 32px);
+  font-weight: 600;
+  letter-spacing: 0.08em;
+  white-space: nowrap;
+}
+
+.clear__answer span {
+  display: inline-block;
+  animation: ink-in 0.6s ease-out both;
+}
+
+.clear__hint {
+  margin: 14px 0 0;
+  font-size: 15px;
+  color: var(--gold-light);
+  animation: fade 1.2s 3.4s both;
+}
+
+.clear__divider {
+  width: 56px;
+  height: 1px;
+  margin: 32px auto 24px;
+  background: linear-gradient(90deg, transparent, var(--gold), transparent);
+  animation: fade 1s 4s both;
+}
+
+.clear__bday {
+  margin: 0;
+  font-family: var(--serif-en);
+  font-style: italic;
+  font-size: 30px;
+  animation: rise 1.4s 4.4s ease-out both;
+}
+
+.clear__close {
+  margin-top: 36px;
+  background: none;
+  border: 1px solid rgba(247, 243, 234, 0.4);
+  border-radius: 999px;
+  padding: 8px 22px;
+  font-size: 12.5px;
+  color: var(--ivory);
+  animation: fade 1s 5.4s both;
+}
+
+/* ===== Animations ===== */
+@keyframes rise {
+  from { opacity: 0; transform: translateY(12px); }
+  to { opacity: 1; transform: none; }
+}
+
+@keyframes fade {
+  from { opacity: 0; }
+  to { opacity: 1; }
+}
+
+@keyframes ink-in {
+  from { opacity: 0; transform: scale(0.6); filter: blur(3px); }
+  to { opacity: 1; transform: none; filter: none; }
+}
+
+@keyframes glow {
+  0% { transform: translateY(0); }
+  40% { transform: translateY(-6px); text-shadow: 0 0 12px var(--gold-light); }
+  100% { transform: none; }
+}
+
+@keyframes shake {
+  20%, 60% { transform: translateX(-6px); }
+  40%, 80% { transform: translateX(6px); }
+}
+
+@keyframes twinkle {
+  0%, 100% { opacity: 0; transform: scale(0.4); }
+  50% { opacity: 1; transform: scale(1); }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-delay: 0s !important;
+    animation-iteration-count: 1 !important;
+  }
+}
