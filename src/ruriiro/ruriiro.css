@@ -153,6 +153,7 @@ input {
 /* ===== 問題 ===== */
 .questions {
   display: grid;
+  grid-template-columns: minmax(0, 1fr); /* 入力欄の既定幅でカードが画面からはみ出さないように */
   gap: 12px;
 }
 
@@ -218,36 +219,9 @@ input {
   color: var(--muted);
 }
 
-.q__choices {
-  display: grid;
-  grid-template-columns: 1fr 1fr;
-  gap: 8px;
-}
 
-.q__choice {
-  padding: 13px 8px;
-  border: 1px solid var(--primary-soft);
-  border-radius: 4px;
-  background: #fff;
-  color: var(--primary);
-  font-size: 14.5px;
-  transition:
-    background 0.2s,
-    color 0.2s;
-}
 
-.q__choice:active {
-  background: var(--primary);
-  color: #fff;
-}
 
-.q__choice.is-wrong {
-  cursor: default;
-  border-color: var(--line);
-  color: var(--muted);
-  text-decoration: line-through;
-  opacity: 0.6;
-}
 
 .q__feedback--multiline {
   white-space: pre-line;
@@ -380,6 +354,7 @@ input {
 
 .final-form input {
   flex: 1;
+  width: 0; /* 幅は flex に任せる（既定の幅で横にはみ出さないように） */
   min-width: 0;
   padding: 12px;
   border: 1px solid var(--primary-soft);

@@ -8,18 +8,19 @@
 // 3. 解読して出てきたなぞなぞ（MESSAGE）の答えが、行き先（DESTINATION）。
 //
 // - QUESTIONS
-//     choices … 選択肢（表示用。漢字でもOK）
-//     answer  … 正解の選択肢の番号（0始まり）
 //     reading … 正解の読み（カタカナ。小さい文字は使わない）。この文字が番号になる
+//               入力はひらがな・カタカナどちらでも正解になる
+//     accept  … 読み以外に正解にしたい書き方（漢字など）。なくてもOK
+//     hint    … 2回まちがえたら出すヒント
 // - SEED: 番号の割り当てを変えたいときに変える数字
 // ※ 書き換えたら `npm run check` で、ちゃんと解けるか確認すること
 // ===================================================================
 
 export interface Question {
   prompt: string
-  choices: string[]
-  answer: number
   reading: string
+  accept?: string[]
+  hint: string
 }
 
 /** 暗号を解読すると出てくる言葉（なぞなぞ） */
@@ -33,27 +34,24 @@ export const DESTINATION_KANJI = '瑠璃色'
 export const QUESTIONS: Question[] = [
   {
     prompt: 'スポンジでクリームを巻いた、くるくるのケーキは？',
-    choices: ['ショートケーキ', 'ロールケーキ', 'チーズケーキ', 'ホールケーキ'],
-    answer: 1,
     reading: 'ロールケーキ',
+    hint: 'ヒント：「巻く」は英語で…？',
   },
   {
     prompt: 'フランス語で「クリスマス」のことを何という？',
-    choices: ['ナターレ', 'ノエル', 'ナビダ', 'クリスマ'],
-    answer: 1,
     reading: 'ノエル',
+    hint: 'ヒント：「ブッシュ・ド・○○○」という、切り株の形のケーキがあるよ',
   },
   {
     prompt: '星のような形をした、小さなお砂糖のお菓子は？',
-    choices: ['マシュマロ', 'ドロップ', '金平糖（こんぺいとう）', 'ラムネ'],
-    answer: 2,
     reading: 'コンペイトウ',
+    accept: ['金平糖'],
+    hint: 'ヒント：漢字で書くと「金平糖」',
   },
   {
     prompt: 'クリスマスに流れる、鈴の音の歌といえば？',
-    choices: ['きよしこの夜', 'ジングルベル', '赤鼻のトナカイ', 'もろびとこぞりて'],
-    answer: 1,
     reading: 'ジングルベル',
+    hint: 'ヒント：♪ ○○○○○○ ○○○○○○ すずがなる',
   },
 ]
 

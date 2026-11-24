@@ -1,5 +1,4 @@
 // 暗号ページの整合性チェック: `npm run check`
-// - 正解の選択肢の番号が範囲内か
 // - 答えの読みがカタカナだけか（入力のゆれ吸収と同じ表記になっているか）
 // - MESSAGE の文字が、すべてどこかの答えに出てくるか（＝解読できるか）
 import { normalizeKana } from '../src/lib/kana.ts'
@@ -8,7 +7,6 @@ import { BLUE_FAMILY, CIPHER, DESTINATION, LETTER_OF, MESSAGE, NEAR_MISS, NUMBER
 const errors: string[] = []
 
 QUESTIONS.forEach((q, i) => {
-  if (!q.choices[q.answer]) errors.push(`Q${i + 1}: answer ${q.answer} の選択肢がありません`)
   if (normalizeKana(q.reading) !== q.reading) errors.push(`Q${i + 1}: 読み ${q.reading} は ${normalizeKana(q.reading)} と書く`)
 })
 for (const [name, w] of Object.entries({ MESSAGE, DESTINATION }))

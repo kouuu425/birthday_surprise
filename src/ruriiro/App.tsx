@@ -17,8 +17,8 @@ import {
 } from './cipher.ts'
 
 // 問題を変えたら番号を上げる（古い進捗と混ざらないように）
-const PROGRESS_KEY = 'ruriiro-progress-v4'
-const STAGE_KEY = 'ruriiro-stage-v4'
+const PROGRESS_KEY = 'ruriiro-progress-v5'
+const STAGE_KEY = 'ruriiro-stage-v5'
 
 /** 0: 問題を解いている / 1: 暗号を解読した / 2: なぞなぞも解けた */
 type Stage = 0 | 1 | 2
@@ -200,16 +200,26 @@ function NumberRow({ reading, known, reveal }: { reading: string; known: Set<num
 }
 
 function QuestionCard({ index, q, known, onCorrect }: { index: number; q: Question; known: Set<number>; onCorrect: () => void }) {
-  const [wrong, setWrong] = useState<Set<number>>(new Set())
+  const [value, setValue] = useState('')
+  const [misses, setMisses] = useState(0)
+  const [message, setMessage] = useState('')
   const [shaking, setShaking] = useState(false)
 
-  function choose(i: number) {
-    if (i === q.answer) {
+  function submit(e: FormEvent) {
+    e.preventDefault()
+    const v = normalizeAnswer(value)
+    if (!v) return
+    const answers = [q.reading, ...(q.accept ?? [])].map(normalizeAnswer)
+    if (answers.includes(v)) {
       onCorrect()
       return
     }
-    setWrong(new Set(wrong).add(i))
+    const n = misses + 1
+    setMisses(n)
     setShaking(true)
+    const base = v.length !== q.reading.length ? `${q.reading.length}文字の言葉だよ` : 'ちがうみたい…'
+    // 2回まちがえたら、問題ごとのヒントも出す
+    setMessage(n >= 2 ? `${base}\n${q.hint}` : base)
   }
 
   return (
@@ -219,20 +229,21 @@ function QuestionCard({ index, q, known, onCorrect }: { index: number; q: Questi
       </div>
       <p className="q__prompt">{q.prompt}</p>
       <NumberRow reading={q.reading} known={known} />
-      <div className="q__choices">
-        {q.choices.map((c, i) => (
-          <button
-            key={i}
-            type="button"
-            className={`q__choice${wrong.has(i) ? ' is-wrong' : ''}`}
-            disabled={wrong.has(i)}
-            onClick={() => choose(i)}
-          >
-            {c}
-          </button>
-        ))}
-      </div>
-      <p className="q__feedback" role="status">{wrong.size > 0 ? 'ちがうみたい…' : ' '}</p>
+      <form className="final-form" onSubmit={submit}>
+        <input
+          value={value}
+          onChange={(e) => { setValue(e.target.value); setMessage('') }}
+          placeholder="ひらがなでもOK"
+          lang="ja"
+          autoComplete="off"
+          autoCorrect="off"
+          spellCheck={false}
+          enterKeyHint="done"
+          aria-label={`Q${index + 1}の答え`}
+        />
+        <button type="submit">決定</button>
+      </form>
+      <p className="q__feedback q__feedback--multiline" role="status">{message || ' '}</p>
     </div>
   )
 }
