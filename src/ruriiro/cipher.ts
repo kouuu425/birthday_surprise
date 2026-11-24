@@ -55,12 +55,6 @@ export const QUESTIONS: Question[] = [
     answer: 1,
     reading: 'ジングルベル',
   },
-  {
-    prompt: '12月の誕生石のひとつ。夜空のような、深い青の石は？',
-    choices: ['ルビー', 'エメラルド', 'ガーネット', 'ラピスラズリ'],
-    answer: 3,
-    reading: 'ラピスラズリ',
-  },
 ]
 
 /**
@@ -72,7 +66,7 @@ export const BLUE_FAMILY = ['アオ', 'アオイロ', 'ブルー', 'ネイビー
 export const NEAR_MISS = ['ルリ']
 export const RIDDLE_HINTS = [
   'ちがうみたい…このページ、何色に見える？',
-  'ヒント：Q5の宝石を、和風に呼ぶと…？',
+  'ヒント：宝石の名前がついた、和の色だよ',
   'ヒント：「○○いろ」の4文字。ラピスラズリの和名は「瑠璃（るり）」',
 ]
 

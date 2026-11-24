@@ -17,8 +17,8 @@ import {
 } from './cipher.ts'
 
 // 問題を変えたら番号を上げる（古い進捗と混ざらないように）
-const PROGRESS_KEY = 'ruriiro-progress-v3'
-const STAGE_KEY = 'ruriiro-stage-v3'
+const PROGRESS_KEY = 'ruriiro-progress-v4'
+const STAGE_KEY = 'ruriiro-stage-v4'
 
 /** 0: 問題を解いている / 1: 暗号を解読した / 2: なぞなぞも解けた */
 type Stage = 0 | 1 | 2
