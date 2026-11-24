@@ -1,16 +1,33 @@
-import { useEffect, useRef, useState, type FormEvent } from 'react'
+import { useEffect, useRef, useState, type FormEvent, type ReactNode } from 'react'
 import { normalizeKana } from '../lib/kana.ts'
 import { NAME } from '../lib/puzzle.ts'
-import { CIPHER, DESTINATION, LETTER_OF, NUMBER_OF, QUESTIONS, type Question } from './cipher.ts'
+import {
+  BLUE_FAMILY,
+  CIPHER,
+  DESTINATION,
+  DESTINATION_KANJI,
+  LETTER_OF,
+  MESSAGE,
+  MESSAGE_DISPLAY,
+  NEAR_MISS,
+  NUMBER_OF,
+  QUESTIONS,
+  RIDDLE_HINTS,
+  type Question,
+} from './cipher.ts'
 
-const STORAGE_KEY = 'ruriiro-progress-v2' // 問題を変えたら番号を上げる
-const FINAL_KEY = 'ruriiro-final-v2'
+// 問題を変えたら番号を上げる（古い進捗と混ざらないように）
+const PROGRESS_KEY = 'ruriiro-progress-v3'
+const STAGE_KEY = 'ruriiro-stage-v3'
+
+/** 0: 問題を解いている / 1: 暗号を解読した / 2: なぞなぞも解けた */
+type Stage = 0 | 1 | 2
 
 // localStorage はプライベートブラウズ等で使えないことがあるので try/catch で包む
-function load(key: string): number {
+function load(key: string, max: number): number {
   try {
     const n = Number(localStorage.getItem(key) ?? 0)
-    return Number.isInteger(n) && n >= 0 ? n : 0
+    return Number.isInteger(n) && n >= 0 && n <= max ? n : 0
   } catch {
     return 0
   }
@@ -23,26 +40,35 @@ function save(key: string, n: number) {
   }
 }
 
+/** 入力をそろえる。「瑠璃色」「この ページの 色」などの漢字・空白・記号も受け付ける */
+function normalizeAnswer(input: string): string {
+  const kanji: [RegExp, string][] = [
+    [/瑠璃/g, 'るり'], [/群青/g, 'ぐんじょう'], [/青/g, 'あお'], [/紺/g, 'こん'], [/藍/g, 'あい'], [/色/g, 'いろ'],
+  ]
+  const kana = kanji.reduce((s, [re, yomi]) => s.replace(re, yomi), input)
+  return normalizeKana(kana).replace(/[、。,.!！?？「」]/g, '')
+}
+
 export default function App() {
-  // 何問目まで解けたか（問題は上から順に解く）
-  const [solvedCount, setSolvedCount] = useState(() => Math.min(load(STORAGE_KEY), QUESTIONS.length))
-  const [finalSolved, setFinalSolved] = useState(() => load(FINAL_KEY) === 1)
-  const finalRef = useRef<HTMLElement>(null)
+  const [solvedCount, setSolvedCount] = useState(() => load(PROGRESS_KEY, QUESTIONS.length))
+  const [stage, setStage] = useState<Stage>(() => load(STAGE_KEY, 2) as Stage)
+  const stepRef = useRef<HTMLElement>(null)
   const allSolved = solvedCount === QUESTIONS.length
 
   // 解読済みの番号
   const known = new Set(QUESTIONS.slice(0, solvedCount).flatMap((q) => [...q.reading].map((ch) => NUMBER_OF.get(ch)!)))
 
-  useEffect(() => save(STORAGE_KEY, solvedCount), [solvedCount])
-  useEffect(() => save(FINAL_KEY, finalSolved ? 1 : 0), [finalSolved])
+  useEffect(() => save(PROGRESS_KEY, solvedCount), [solvedCount])
+  useEffect(() => save(STAGE_KEY, stage), [stage])
+  // 次の段階が出たら、そこまでスクロール
   useEffect(() => {
-    if (allSolved) finalRef.current?.scrollIntoView({ behavior: 'smooth', block: 'center' })
-  }, [allSolved, finalSolved])
+    if (allSolved) stepRef.current?.scrollIntoView({ behavior: 'smooth', block: 'center' })
+  }, [allSolved, stage])
 
   function reset() {
     if (!confirm('最初からやり直しますか？')) return
     setSolvedCount(0)
-    setFinalSolved(false)
+    setStage(0)
     window.scrollTo(0, 0)
   }
 
@@ -53,7 +79,7 @@ export default function App() {
         <h1 className="r-hero__title">今夜の行き先</h1>
         <div className="r-hero__rule" aria-hidden />
         <p className="r-hero__lead">
-          ディナーのお店の名前は、この暗号の中。
+          ディナーのお店は、この暗号の先に。
           <br />
           同じ数字は、いつも同じ文字。
           <br />
@@ -61,11 +87,11 @@ export default function App() {
         </p>
       </header>
 
-      <section className={`cipher${finalSolved ? ' is-complete' : ''}`} aria-label="暗号">
+      <section className={`cipher${stage >= 1 ? ' is-complete' : ''}`} aria-label="暗号">
         {CIPHER.map((n, i) => (
-          <div key={i} className={`cipher__tile${finalSolved ? ' is-open' : ''}`} style={{ animationDelay: `${i * 0.15}s` }}>
+          <div key={i} className={`cipher__tile${stage >= 1 ? ' is-open' : ''}`} style={{ transitionDelay: `${i * 0.12}s`, animationDelay: `${i * 0.12}s` }}>
             <span className="cipher__num">{n}</span>
-            <span className="cipher__ch" aria-hidden={!finalSolved}>{finalSolved ? LETTER_OF.get(n) : ''}</span>
+            <span className="cipher__ch" aria-hidden={stage < 1}>{stage >= 1 ? LETTER_OF.get(n) : ''}</span>
           </div>
         ))}
       </section>
@@ -87,20 +113,49 @@ export default function App() {
 
       <KeyTable known={known} />
 
-      {allSolved && !finalSolved && (
-        <section ref={finalRef}>
-          <FinalCard onCorrect={() => setFinalSolved(true)} />
+      {allSolved && stage === 0 && (
+        <section ref={stepRef}>
+          <InputCard
+            key="decode"
+            label="Decode"
+            prompt={
+              <>
+                一番上の暗号 <strong className="q__cipher">{CIPHER.join(' ')}</strong> を解読すると？
+              </>
+            }
+            check={(v) => (v === normalizeAnswer(MESSAGE) ? null : 'ちがうみたい…解読表と1文字ずつ見比べてみて')}
+            onCorrect={() => setStage(1)}
+          />
         </section>
       )}
 
-      {finalSolved && (
-        <section ref={finalRef} className="r-finale">
+      {stage === 1 && (
+        <section ref={stepRef}>
+          <InputCard
+            key="riddle"
+            label="Last"
+            prompt={
+              <>
+                暗号は「<strong className="q__cipher">{MESSAGE_DISPLAY}</strong>」。
+                <br />
+                さて、このページは何色？
+              </>
+            }
+            check={riddleFeedback}
+            onCorrect={() => setStage(2)}
+          />
+        </section>
+      )}
+
+      {stage === 2 && (
+        <section ref={stepRef} className="r-finale">
           <p className="r-finale__eyebrow">Decoded</p>
           <p className="r-finale__word">
             {[...DESTINATION].map((ch, i) => (
               <span key={i} style={{ animationDelay: `${0.4 + i * 0.25}s` }}>{ch}</span>
             ))}
           </p>
+          <p className="r-finale__kanji">{DESTINATION_KANJI}</p>
           <div className="r-finale__rule" aria-hidden />
           <p className="r-finale__message">
             それでは、「{DESTINATION}」に
@@ -115,6 +170,15 @@ export default function App() {
       </footer>
     </main>
   )
+}
+
+/** なぞなぞの判定：青系なら「惜しい」、それ以外はまちがえた回数に応じてヒント */
+function riddleFeedback(v: string, misses: number): string | null {
+  if (v === normalizeAnswer(DESTINATION)) return null
+  if (NEAR_MISS.includes(v)) return 'おしい！色の名前だから…？'
+  const hint = RIDDLE_HINTS[Math.min(misses, RIDDLE_HINTS.length) - 1]
+  if (BLUE_FAMILY.includes(v)) return `青系なのは合ってる！もっとぴったりな、和の色の名前があるよ${misses >= 2 ? `\n${hint}` : ''}`
+  return hint
 }
 
 /** 答えを番号の並びで見せる。わかっている番号は文字も出す */
@@ -202,30 +266,39 @@ function KeyTable({ known }: { known: Set<number> }) {
   )
 }
 
-function FinalCard({ onCorrect }: { onCorrect: () => void }) {
+/** 自由入力の問い。check が null を返したら正解、文字列ならそれを表示する */
+function InputCard({ label, prompt, check, onCorrect }: {
+  label: string
+  prompt: ReactNode
+  /** misses は、今回を含めてまちがえた回数 */
+  check: (normalized: string, misses: number) => string | null
+  onCorrect: () => void
+}) {
   const [value, setValue] = useState('')
   const [message, setMessage] = useState('')
   const [shaking, setShaking] = useState(false)
+  const [misses, setMisses] = useState(0)
 
   function submit(e: FormEvent) {
     e.preventDefault()
-    if (!value.trim()) return
-    if (normalizeKana(value) === DESTINATION) {
+    const v = normalizeAnswer(value)
+    if (!v) return
+    const result = check(v, misses + 1)
+    if (result === null) {
       onCorrect()
       return
     }
+    setMisses(misses + 1)
     setShaking(true)
-    setMessage('ちがうみたい…解読表と見比べてみて')
+    setMessage(result)
   }
 
   return (
     <div className={`q q--active q--final${shaking ? ' is-shaking' : ''}`} onAnimationEnd={() => setShaking(false)}>
       <div className="q__head">
-        <span className="q__num">Last</span>
+        <span className="q__num">{label}</span>
       </div>
-      <p className="q__prompt">
-        一番上の暗号 <strong className="q__cipher">{CIPHER.join(' ')}</strong> を解読すると？
-      </p>
+      <p className="q__prompt">{prompt}</p>
       <form className="final-form" onSubmit={submit}>
         <input
           value={value}
@@ -236,11 +309,11 @@ function FinalCard({ onCorrect }: { onCorrect: () => void }) {
           autoCorrect="off"
           spellCheck={false}
           enterKeyHint="done"
-          aria-label="暗号の答え"
+          aria-label="答え"
         />
         <button type="submit">決定</button>
       </form>
-      <p className="q__feedback" role="status">{message || ' '}</p>
+      <p className="q__feedback q__feedback--multiline" role="status">{message || ' '}</p>
     </div>
   )
 }

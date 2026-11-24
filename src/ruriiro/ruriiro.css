@@ -92,8 +92,9 @@ input {
 /* ===== 暗号 ===== */
 .cipher {
   display: grid;
-  grid-template-columns: repeat(4, 1fr);
-  gap: 10px;
+  grid-auto-flow: column;
+  grid-auto-columns: 1fr; /* 暗号の文字数に合わせて横一列に並べる */
+  gap: 6px;
   margin: 4px 0 28px;
   animation: rise 1.2s 0.2s ease-out both;
 }
@@ -123,12 +124,12 @@ input {
 
 .cipher__num {
   font-family: var(--serif-en);
-  font-size: clamp(30px, 10vw, 40px);
+  font-size: clamp(18px, 6vw, 26px);
   color: var(--accent-light);
 }
 
 .cipher__ch {
-  font-size: clamp(30px, 10vw, 42px);
+  font-size: clamp(20px, 6.5vw, 30px);
   font-weight: 700;
   color: #fff;
   opacity: 0;
@@ -136,8 +137,8 @@ input {
 }
 
 .cipher__tile.is-open .cipher__num {
-  font-size: 13px;
-  transform: translateY(calc(-1 * clamp(36px, 11vw, 48px)));
+  font-size: 10px;
+  transform: translateY(calc(-1 * clamp(18px, 6vw, 26px)));
 }
 
 .cipher__tile.is-open .cipher__ch {
@@ -248,6 +249,11 @@ input {
   opacity: 0.6;
 }
 
+.q__feedback--multiline {
+  white-space: pre-line;
+  line-height: 1.7;
+}
+
 .q__feedback {
   margin: 10px 0 0;
   min-height: 1.5em;
@@ -321,8 +327,8 @@ input {
 
 .key__grid {
   display: grid;
-  grid-template-columns: repeat(6, 1fr);
-  gap: 6px;
+  grid-template-columns: repeat(7, 1fr);
+  gap: 5px;
 }
 
 .key__cell {
@@ -432,6 +438,15 @@ input {
 .r-finale__word span {
   display: inline-block;
   animation: ink-in 0.9s ease-out both;
+}
+
+.r-finale__kanji {
+  margin: 6px 0 0;
+  font-size: 14px;
+  letter-spacing: 0.4em;
+  margin-right: -0.4em;
+  color: var(--accent-light);
+  animation: fade 1s 1.4s ease-out both;
 }
 
 .r-finale__rule {
