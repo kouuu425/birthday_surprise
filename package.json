@@ -8,7 +8,7 @@
     "build": "tsc -b && vite build",
     "lint": "oxlint",
     "preview": "vite preview",
-    "check": "node scripts/check-puzzle.ts"
+    "check": "node scripts/check-puzzle.ts && node scripts/check-cipher.ts"
   },
   "dependencies": {
     "react": "^19.3.1",

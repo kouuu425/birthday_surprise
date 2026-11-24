@@ -1,0 +1,418 @@
+/* ===== Design tokens: 瑠璃色 × 金 × 白磁 =====
+   テーマを変えるときは、この :root の値だけを書き換えればOK */
+:root {
+  --primary: #1f3170; /* 瑠璃色（タイトル・記号） */
+  --primary-deep: #0e1a45; /* 暗号のタイルの背景 */
+  --primary-soft: #3b4f93; /* 枠線 */
+  --accent: #b8964f; /* 金（ラピスラズリの金色の粒） */
+  --accent-light: #e3c98d; /* 暗い背景の上で使う金 */
+  --bg: #f2f3f8; /* ページ背景 */
+  --paper: #fbfbfe; /* カードの背景 */
+  --ink: #1c2240; /* 本文 */
+  --muted: #747a92; /* 補足の文字 */
+  --line: #dde0ec; /* 区切り線 */
+  --ng: #a5475a; /* まちがい */
+
+  --serif-ja: 'Zen Old Mincho', 'Hiragino Mincho ProN', 'Yu Mincho', serif;
+  --serif-en: 'Playfair Display', 'Times New Roman', serif;
+
+  color-scheme: light;
+  font-family: var(--serif-ja);
+  color: var(--ink);
+  background: var(--bg);
+  -webkit-text-size-adjust: 100%;
+  -webkit-tap-highlight-color: transparent;
+}
+
+*,
+*::before,
+*::after {
+  box-sizing: border-box;
+}
+
+body {
+  margin: 0;
+  min-height: 100dvh;
+  background:
+    radial-gradient(120% 60% at 50% 0%, #ffffff 0%, transparent 60%),
+    var(--bg);
+}
+
+button {
+  font: inherit;
+  color: inherit;
+  cursor: pointer;
+}
+
+.r-page {
+  max-width: 480px;
+  margin: 0 auto;
+  padding: 0 16px 64px;
+}
+
+/* ===== Hero ===== */
+.r-hero {
+  text-align: center;
+  padding: 56px 0 28px;
+  animation: rise 1.2s ease-out both;
+}
+
+.r-hero__eyebrow {
+  margin: 0;
+  font-family: var(--serif-en);
+  font-style: italic;
+  letter-spacing: 0.12em;
+  color: var(--accent);
+  font-size: 15px;
+}
+
+.r-hero__title {
+  margin: 10px -0.18em 0 0; /* letter-spacing の分だけ右にずれるのを補正 */
+  font-weight: 600;
+  font-size: clamp(30px, 9vw, 40px);
+  letter-spacing: 0.18em;
+  color: var(--primary);
+}
+
+.r-hero__rule,
+.r-finale__rule {
+  width: 56px;
+  height: 1px;
+  margin: 20px auto;
+  background: linear-gradient(90deg, transparent, var(--accent), transparent);
+}
+
+.r-hero__lead {
+  margin: 0;
+  font-size: 14px;
+  line-height: 2;
+}
+
+/* ===== 暗号 ===== */
+.cipher {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 10px;
+  margin: 4px 0 28px;
+  animation: rise 1.2s 0.2s ease-out both;
+}
+
+.cipher__tile {
+  position: relative;
+  aspect-ratio: 3 / 4;
+  border-radius: 4px;
+  background:
+    radial-gradient(circle at 30% 25%, rgba(227, 201, 141, 0.25) 0 1px, transparent 2px),
+    radial-gradient(circle at 70% 70%, rgba(227, 201, 141, 0.2) 0 1px, transparent 2px),
+    radial-gradient(circle at 55% 40%, rgba(227, 201, 141, 0.15) 0 1px, transparent 2px),
+    linear-gradient(160deg, var(--primary-soft), var(--primary-deep));
+  box-shadow: 0 6px 16px rgba(14, 26, 69, 0.25);
+  display: grid;
+  place-items: center;
+  overflow: hidden;
+}
+
+.cipher__sym,
+.cipher__ch {
+  grid-area: 1 / 1;
+  transition:
+    opacity 0.6s ease,
+    transform 0.6s ease;
+}
+
+.cipher__sym {
+  font-size: clamp(26px, 8vw, 34px);
+  color: var(--accent-light);
+}
+
+.cipher__ch {
+  font-size: clamp(30px, 10vw, 42px);
+  font-weight: 700;
+  color: #fff;
+  opacity: 0;
+  transform: scale(0.6);
+}
+
+.cipher__tile.is-open .cipher__sym {
+  opacity: 0;
+  transform: scale(1.4);
+}
+
+.cipher__tile.is-open .cipher__ch {
+  opacity: 1;
+  transform: scale(1);
+}
+
+.cipher.is-complete .cipher__tile {
+  animation: glow 1.6s ease-in-out both;
+}
+
+/* ===== 問題 ===== */
+.questions {
+  display: grid;
+  gap: 12px;
+}
+
+.q {
+  background: var(--paper);
+  border: 1px solid var(--line);
+  border-radius: 4px;
+  padding: 16px 18px;
+}
+
+.q--active {
+  border-color: var(--primary-soft);
+  box-shadow: 0 8px 24px rgba(14, 26, 69, 0.1);
+  animation: rise 0.7s ease-out both;
+}
+
+.q--active.is-shaking {
+  animation: shake 0.4s ease;
+}
+
+.q--locked {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  color: var(--muted);
+  background: transparent;
+  border-style: dashed;
+  font-size: 12.5px;
+}
+
+.q--solved {
+  padding: 12px 18px;
+}
+
+.q__head {
+  display: flex;
+  align-items: baseline;
+  gap: 10px;
+}
+
+.q__num {
+  font-family: var(--serif-en);
+  font-style: italic;
+  color: var(--accent);
+  font-size: 15px;
+  flex-shrink: 0;
+}
+
+.q__key {
+  font-size: 12.5px;
+  color: var(--muted);
+}
+
+.q__sym {
+  color: var(--primary);
+  font-size: 1.15em;
+}
+
+.q__prompt {
+  margin: 10px 0 14px;
+  font-size: 16px;
+  line-height: 1.8;
+  color: var(--ink);
+}
+
+.q__prompt--small {
+  margin: 0;
+  font-size: 12.5px;
+  line-height: 1.7;
+  color: var(--muted);
+}
+
+.q__choices {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 8px;
+}
+
+.q__choice {
+  padding: 13px 8px;
+  border: 1px solid var(--primary-soft);
+  border-radius: 4px;
+  background: #fff;
+  color: var(--primary);
+  font-size: 14.5px;
+  transition:
+    background 0.2s,
+    color 0.2s;
+}
+
+.q__choice:active {
+  background: var(--primary);
+  color: #fff;
+}
+
+.q__choice.is-wrong {
+  cursor: default;
+  border-color: var(--line);
+  color: var(--muted);
+  text-decoration: line-through;
+  opacity: 0.6;
+}
+
+.q__feedback {
+  margin: 10px 0 0;
+  min-height: 1.5em;
+  font-size: 13px;
+  color: var(--ng);
+  text-align: center;
+}
+
+.q__result {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 12px;
+  margin-top: 8px;
+  animation: fade 0.6s ease-out both;
+}
+
+.q__reading {
+  letter-spacing: 0.12em;
+  font-size: 16px;
+  color: var(--muted);
+}
+
+.q__reading .is-picked {
+  color: var(--primary);
+  font-weight: 700;
+  border-bottom: 2px solid var(--accent);
+}
+
+.q__arrow {
+  color: var(--accent);
+}
+
+.q__decoded {
+  font-size: 16px;
+  font-weight: 600;
+  color: var(--primary);
+}
+
+/* ===== クリア ===== */
+.r-finale {
+  margin-top: 28px;
+  padding: 36px 18px 32px;
+  text-align: center;
+  border-radius: 4px;
+  color: #fff;
+  background:
+    radial-gradient(circle at 20% 30%, rgba(227, 201, 141, 0.35) 0 1px, transparent 2px),
+    radial-gradient(circle at 80% 20%, rgba(227, 201, 141, 0.3) 0 1px, transparent 2px),
+    radial-gradient(circle at 65% 80%, rgba(227, 201, 141, 0.3) 0 1px, transparent 2px),
+    radial-gradient(circle at 35% 75%, rgba(227, 201, 141, 0.25) 0 1px, transparent 2px),
+    linear-gradient(160deg, var(--primary-soft), var(--primary-deep));
+  box-shadow: 0 12px 32px rgba(14, 26, 69, 0.3);
+  animation: rise 1s ease-out both;
+}
+
+.r-finale__eyebrow {
+  margin: 0;
+  font-family: var(--serif-en);
+  font-style: italic;
+  letter-spacing: 0.2em;
+  color: var(--accent-light);
+  font-size: 14px;
+}
+
+.r-finale__word {
+  margin: 14px -0.3em 0 0;
+  font-size: clamp(38px, 13vw, 52px);
+  font-weight: 700;
+  letter-spacing: 0.3em;
+}
+
+.r-finale__word span {
+  display: inline-block;
+  animation: ink-in 0.9s ease-out both;
+}
+
+.r-finale__rule {
+  background: linear-gradient(90deg, transparent, var(--accent-light), transparent);
+}
+
+.r-finale__message {
+  margin: 0;
+  font-size: 16px;
+  line-height: 2;
+  animation: fade 1s 1.6s ease-out both;
+}
+
+.r-footer {
+  margin-top: 40px;
+  text-align: center;
+}
+
+.r-footer button {
+  background: none;
+  border: none;
+  color: var(--muted);
+  font-size: 12px;
+  text-decoration: underline;
+}
+
+/* ===== Animations ===== */
+@keyframes rise {
+  from {
+    opacity: 0;
+    transform: translateY(12px);
+  }
+  to {
+    opacity: 1;
+    transform: none;
+  }
+}
+
+@keyframes fade {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}
+
+@keyframes ink-in {
+  from {
+    opacity: 0;
+    filter: blur(8px);
+    transform: translateY(6px);
+  }
+  to {
+    opacity: 1;
+    filter: none;
+    transform: none;
+  }
+}
+
+@keyframes glow {
+  50% {
+    box-shadow:
+      0 6px 16px rgba(14, 26, 69, 0.25),
+      0 0 24px rgba(227, 201, 141, 0.7);
+  }
+}
+
+@keyframes shake {
+  20%,
+  60% {
+    transform: translateX(-6px);
+  }
+  40%,
+  80% {
+    transform: translateX(6px);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-delay: 0s !important;
+    transition-duration: 0.01ms !important;
+  }
+}

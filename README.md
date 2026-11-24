@@ -1,6 +1,11 @@
 # birthday_surprise
 
-誕生日の謎解きクロスワード。React + Vite + TypeScript で作り、GitHub Pages で公開する。
+誕生日の謎解きページ。React + Vite + TypeScript で作り、GitHub Pages で公開する。
+
+| ページ | URL | 内容 |
+|---|---|---|
+| クロスワード | `/birthday_surprise/` | ディナーのあとに解く。答えはプレゼントの場所 |
+| 暗号（ルリイロ） | `/birthday_surprise/ruriiro/` | ランチのあとに解く。答えは夜のお店の名前 |
 
 ## コマンド
 
@@ -8,7 +13,7 @@
 |---|---|
 | `npm run dev` | 開発サーバー（保存するとすぐ画面に反映される） |
 | `npm run dev -- --host` | 同じ Wi-Fi のスマホから確認したいとき |
-| `npm run check` | パズルの整合性チェック（盤面を変えたら必ず実行） |
+| `npm run check` | パズルと暗号の整合性チェック（中身を変えたら必ず実行） |
 | `npm run build` | 本番用ファイルを `dist/` に出力 |
 | `npm run preview` | ビルド結果をローカルで確認 |
 
@@ -23,9 +28,17 @@ src/
     Grid.tsx           ← マス目
     AnswerPanel.tsx    ← 画面下の入力欄
     ClearOverlay.tsx   ← クリア演出
+    StartScreen.tsx    ← 封筒のスタート画面
+    FinalPanel.tsx     ← 最終問題の入力欄
   App.tsx              ← 全体の組み立てと状態（どのカギが解けたか）
   index.css            ← デザイン（色は :root の変数で管理）
+  ruriiro/
+    cipher.ts          ← 暗号ページの問題・選択肢・暗号文。主にここを編集
+    App.tsx            ← 暗号ページの画面
+    ruriiro.css        ← 暗号ページのデザイン（瑠璃色テーマ）
+ruriiro/index.html     ← 暗号ページの入口
 scripts/check-puzzle.ts
+scripts/check-cipher.ts
 .github/workflows/deploy.yml ← main に push すると自動でデプロイ
 ```
 
